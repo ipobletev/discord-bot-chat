@@ -26,7 +26,7 @@ import userconfig
 intents = Intents.default()
 intents.message_content = True
 intents.members = True
-bot = commands.Bot(command_prefix="dog ", intents=intents)
+bot = commands.Bot(command_prefix="chatisma ", intents=intents)
 bot.remove_command("help")
 
 @bot.command(name="profile")
