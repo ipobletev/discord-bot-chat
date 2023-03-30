@@ -22,7 +22,11 @@ while True:
     with mic as source:
         print("\nlistening...")
         r.adjust_for_ambient_noise(source, duration=0.3)
-        audio = r.listen(source)
+        try:
+            audio = r.listen(source)
+        except KeyboardInterrupt:
+            break
+        
     print("no longer listening.\n")
 
     try:
@@ -46,3 +50,5 @@ while True:
 
     engine.say(response_str)
     engine.runAndWait()
+
+print("Finish program")
