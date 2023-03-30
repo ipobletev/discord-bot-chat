@@ -1,8 +1,8 @@
-// Require the necessary discord.js classes
-const { Client, Events, GatewayIntentBits, Partials } = require('discord.js');
+const { Client, GatewayIntentBits, Partials } = require("discord.js");
+const { joinVoiceChannel } = require("@discordjs/voice");
+const { addSpeechEvent } = require("discord-speech-recognition");
 const { token } = require('./config.json');
 
-// Create a new client instance
 const client = new Client({
     intents: [
         GatewayIntentBits.DirectMessages,
@@ -12,20 +12,31 @@ const client = new Client({
         GatewayIntentBits.MessageContent,
       ],
       partials: [Partials.Channel],
-  });
-
-// When the client is ready, run this code (only once)
-// We use 'c' for the event parameter to keep it separate from the already defined 'client'
-client.once(Events.ClientReady, c => {
-	console.log(`Ready! Logged in as ${c.user.tag}`);
 });
+addSpeechEvent(client);
 
-client.on("messageCreate", async message => {
-    console.log(message.content)
-    if(message.content == "hola"){
-        message.channel.send("HOLA!");
+client.on("messageCreate", (msg) => {
+    const voiceChannel = msg.member?.voice.channel;
+    if (voiceChannel) {
+        joinVoiceChannel({
+        channelId: voiceChannel.id,
+        guildId: voiceChannel.guild.id,
+        adapterCreator: voiceChannel.guild.voiceAdapterCreator,
+        selfDeaf: false,
+        });
     }
 });
 
-// Log in to Discord with your client's token
+client.on("speech", (msg) => {
+  // If bot didn't recognize speech, content will be empty
+  console.log(msg.content);
+  if (!msg.content) return;
+
+  msg.author.send(msg.content);
+});
+
+client.on("ready", () => {
+  console.log("Ready!");
+});
+
 client.login(token);
