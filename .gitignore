@@ -2,6 +2,13 @@
 node_modules
 .env
 config.json
+tts-audio.mp3
+
+#windows audio
+ffmpeg.exe
+ffplay.exe
+ffprobe.exe
 
 #Python
+myvenv
 test.py
