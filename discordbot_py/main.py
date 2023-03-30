@@ -121,7 +121,7 @@ async def tts(ctx, *args):
         if vc.is_playing():
             vc.stop()
 
-        myobj = gTTS(text=text, lang="en", slow=False)
+        myobj = gTTS(text=text, lang="es", slow=False)
         myobj.save("tts-audio.mp3")
 
         source = await nextcord.FFmpegOpusAudio.from_probe("tts-audio.mp3", method='fallback')
