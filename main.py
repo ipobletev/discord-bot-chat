@@ -17,9 +17,9 @@ import openai
 #OpenAi
 openai.api_key = userconfig.OPENAI_APIKEY
 conversation = ""
+BOT_NAME="ChatGPT"
 
 #Discord
-
 intents = Intents.default()
 intents.message_content = True
 intents.members = True
@@ -133,7 +133,7 @@ async def cht(ctx, *args):
     user = ctx.message.author
     conversation = ""
     
-    prompt = str(user) + ": " + str(text) + userconfig.BOT_NAME + ": "
+    prompt = str(user) + ": " + str(text) + BOT_NAME + ": "
     print(str(user) + ": " + str(text))
     
     conversation += prompt
@@ -141,10 +141,10 @@ async def cht(ctx, *args):
     # fetch response from open AI api
     response = openai.Completion.create(engine='text-davinci-003', prompt=conversation, max_tokens=100)
     response_str = response["choices"][0]["text"].replace("\n", "")
-    response_str = response_str.split(str(user) + ": ", 1)[0].split(userconfig.BOT_NAME + ": ", 1)[0]
+    response_str = response_str.split(str(user) + ": ", 1)[0].split(BOT_NAME + ": ", 1)[0]
 
     conversation += response_str + "\n"
-    print(userconfig.BOT_NAME + ": " + response_str)
+    print(BOT_NAME + ": " + response_str)
     
     await ctx.send(response_str)
     

@@ -6,8 +6,3 @@ load_dotenv('.env')
 #Creds
 DISCORD_TOKEN = os.getenv('DISCORD_TOKEN', '')
 OPENAI_APIKEY = os.getenv('OPENAI_APIKEY', '')
-
-#
-USER_NAME = os.getenv('USER_NAME', 'You')
-BOT_NAME = os.getenv('BOT_NAME', 'Jarvis')
-MICROPHONE_INDEX =int(os.getenv('MICROPHONE_INDEX', '1'))
