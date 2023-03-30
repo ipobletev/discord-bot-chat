@@ -13,16 +13,6 @@ from gtts import gTTS
 import pyttsx3
 import userconfig
 
-# engine = pyttsx3.init('sapi5')
-# voices = engine.getProperty('voices')
-# engine.setProperty('voice', voices[1].id)
-# engine.setProperty('rate', 130)
-
-
-# pip install nextcord --upgrade
-# reinvite bot with bot AND application.commands perm
-# https://docs.nextcord.dev/en/stable/interactions.html
-
 intents = Intents.default()
 intents.message_content = True
 intents.members = True
