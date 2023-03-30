@@ -12,3 +12,4 @@ ffprobe.exe
 #Python
 myvenv
 test.py
+__pycache__
