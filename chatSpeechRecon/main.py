@@ -1,13 +1,15 @@
 import openai
 import pyttsx3
 import speech_recognition as sr
+import userconfig
 
-openai.api_key = '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'
-microfone_index = 2
-user_name = "You"
-bot_name = "Jarvis"
+#Creds
+openai.api_key = userconfig.OPENAI_APIKEY
 
-
+#
+microfone_index = userconfig.MICROPHONE_INDEX
+user_name = userconfig.USER_NAME
+bot_name = userconfig.BOT_NAME
 
 engine = pyttsx3.init()
 
