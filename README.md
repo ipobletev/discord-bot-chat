@@ -35,7 +35,7 @@ This is a Discord bot implementation that uses the ChatGPT API to communicate vi
 ---
 Main Command - Prefix
 
-    chatisma <comando> <valor>
+    chatisma <command> <valor>
 
 Query user profile information
     
