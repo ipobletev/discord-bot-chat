@@ -1,0 +1,7 @@
+#Js
+node_modules
+.env
+config.json
+
+#Python
+test.py
