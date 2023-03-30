@@ -5,24 +5,30 @@ This is a Discord bot implementation that uses the ChatGPT API to communicate vi
 
 ## Installation:
 ---
-1-Dependencies
+1. Dependencies
 
-    pip install -r requirements.txt
+        pip install -r requirements.txt
 
-2-Download ffmpeg executables for generate playback. 
+2. Download ffmpeg executables for generate playback. 
 
-Windows 
-* ffmpeg: https://github.com/BtbN/FFmpeg-Builds/releases \
-* Download: ffmpeg-master-latest-win64-gpl.zip \
-* Place the 3 executable files (ffmpeg.exe,ffmpeg.exe,ffprobe.exe) from the "bin" folder in the main project directory.
+    Windows 
+    * ffmpeg: https://github.com/BtbN/FFmpeg-Builds/releases \
+    * Download: ffmpeg-master-latest-win64-gpl.zip \
+    * Place the 3 executable files (ffmpeg.exe,ffmpeg.exe,ffprobe.exe) from the "bin" folder in the main project directory.
 
-## Configuration of credentials and others
+3. Configuration of credentials and others
 
-Create a ".env" file in the main project directory. Fill in the Discord and ChatGPT API credentials.
+    Create a ".env" file in the main project directory. Fill in the Discord and ChatGPT API credentials.
 
-    # Creds
-    OPENAI_APIKEY="APIKEY"
-    DISCORD_TOKEN="TOKEN"
+        # Creds
+        OPENAI_APIKEY="APIKEY"
+        DISCORD_TOKEN="TOKEN"
+
+    4- Execute
+
+    Init discord bot.
+
+        python main.py
 
 ## Bot Commands
 
