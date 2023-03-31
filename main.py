@@ -16,7 +16,6 @@ import openai
 
 #OpenAi
 openai.api_key = userconfig.OPENAI_APIKEY
-conversation = ""
 BOT_NAME="ChatGPT"
 
 #Discord
@@ -25,6 +24,7 @@ intents.message_content = True
 intents.members = True
 bot = commands.Bot(command_prefix="chatisma ", intents=intents)
 bot.remove_command("help")
+bot.conversation = ""
 
 @bot.command(name="profile")
 async def Profile(ctx, user: Member = None):
@@ -78,6 +78,7 @@ async def Server(ctx):
 
 @bot.command(name='leave')
 async def leave(ctx):
+    bot.conversation=""
     await ctx.voice_client.disconnect()
     await ctx.send("👋")
 
@@ -97,7 +98,7 @@ async def leave(ctx):
 
 @bot.command(name='join')
 async def stop(ctx):
-    conversation = ""
+    bot.conversation = ""
     user = ctx.message.author
     if user.voice != None:
         try:
@@ -131,19 +132,18 @@ async def tts(ctx, *args):
 async def cht(ctx, *args):
     text = " ".join(args)
     user = ctx.message.author
-    conversation = ""
     
     prompt = str(user) + ": " + str(text) + BOT_NAME + ": "
     print(str(user) + ": " + str(text))
     
-    conversation += prompt
+    bot.conversation += prompt
 
     # fetch response from open AI api
-    response = openai.Completion.create(engine='text-davinci-003', prompt=conversation, max_tokens=100)
+    response = openai.Completion.create(engine='text-davinci-003', prompt=bot.conversation, max_tokens=1000)
     response_str = response["choices"][0]["text"].replace("\n", "")
     response_str = response_str.split(str(user) + ": ", 1)[0].split(BOT_NAME + ": ", 1)[0]
 
-    conversation += response_str + "\n"
+    bot.conversation += response_str + "\n"
     print(BOT_NAME + ": " + response_str)
     
     await ctx.send(response_str)
