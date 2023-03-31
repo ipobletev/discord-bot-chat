@@ -14,7 +14,7 @@ This is a Discord bot implementation that uses the ChatGPT API to communicate vi
     Windows 
     * ffmpeg: https://github.com/BtbN/FFmpeg-Builds/releases \
     * Download: ffmpeg-master-latest-win64-gpl.zip \
-    * Place the 3 executable files (ffmpeg.exe,ffmpeg.exe,ffprobe.exe) from the "bin" folder in the main project directory.
+    * Place the 3 executable files (ffmpeg.exe,ffmpeg.exe,ffprobe.exe) from the "bin" folder to the main project directory.
 
 3. Configuration of credentials and others
 
