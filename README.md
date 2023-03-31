@@ -18,7 +18,7 @@ This is a Discord bot implementation that uses the ChatGPT API to communicate vi
 
 3. Configuration of credentials and others
 
-    Create a ".env" file in the main project directory. Fill in the Discord and ChatGPT API credentials.
+    Create a ".env" file in the main project directory. Set the Discord and ChatGPT API credentials.
 
         # Creds
         OPENAI_APIKEY="APIKEY"
