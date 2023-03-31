@@ -139,7 +139,15 @@ async def cht(ctx, *args):
     bot.conversation += prompt
 
     # fetch response from open AI api
-    response = openai.Completion.create(engine='text-davinci-003', prompt=bot.conversation, max_tokens=1000)
+    response = openai.Completion.create(
+        engine='text-davinci-003', 
+        prompt=bot.conversation, 
+        temperature=0.7,
+        max_tokens=1000,
+        top_p=1.0,
+        frequency_penalty=0.0,
+        presence_penalty=0.0)
+    
     response_str = response["choices"][0]["text"].replace("\n", "")
     response_str = response_str.split(str(user) + ": ", 1)[0].split(BOT_NAME + ": ", 1)[0]
 
