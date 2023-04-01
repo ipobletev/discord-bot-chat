@@ -8,4 +8,4 @@ DISCORD_TOKEN = os.getenv('DISCORD_TOKEN', '')
 OPENAI_APIKEY = os.getenv('OPENAI_APIKEY', '')
 
 #Config
-CONVERSATION_SYSTEM = os.getenv('CONVERSATION_SYSTEM', 'You are a helpful assistant.')
+DEFAULT_SYSTEM_PROMPT = os.getenv('CONVERSATION_SYSTEM', 'You are a helpful assistant.')
