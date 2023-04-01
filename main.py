@@ -24,7 +24,7 @@ intents.message_content = True
 intents.members = True
 bot = commands.Bot(command_prefix="chatisma ", intents=intents)
 bot.remove_command("help")
-bot.conversation=[{"role": "system", "content": "You are a helpful assistant."}]
+bot.conversation=[{"role": "system", "content": userconfig.CONVERSATION_SYSTEM}]
 
 @bot.command(name="profile")
 async def Profile(ctx, user: Member = None):
@@ -78,7 +78,7 @@ async def Server(ctx):
 
 @bot.command(name='leave')
 async def leave(ctx):
-    bot.conversation=[{"role": "system", "content": "You are a helpful assistant."}]
+    bot.conversation=[{"role": "system", "content": userconfig.CONVERSATION_SYSTEM}]
     await ctx.voice_client.disconnect()
     await ctx.send("👋")
 
@@ -98,7 +98,7 @@ async def leave(ctx):
 
 @bot.command(name='join')
 async def stop(ctx):
-    bot.conversation=[{"role": "system", "content": "You are a helpful assistant."}]
+    bot.conversation=[{"role": "system", "content": userconfig.CONVERSATION_SYSTEM}]
 
     user = ctx.message.author
     if user.voice != None:
