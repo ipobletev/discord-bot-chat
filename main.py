@@ -169,9 +169,9 @@ async def cht(ctx, *args):
         top_p=0.9
     )
 
-    bot.conversation.append({"role": "assistant", "content": response['choices'][0]['message']['content']})
-    response_str="\n" + response['choices'][0]['message']['content'] + "\n"
-    print(response_str)
+    response_str=response['choices'][0]['message']['content']
+    bot.conversation.append({"role": "assistant", "content": response_str})
+    print(response_str + "\n")
     ####
     
     await ctx.send(response_str)
