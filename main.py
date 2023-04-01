@@ -24,7 +24,7 @@ intents.message_content = True
 intents.members = True
 bot = commands.Bot(command_prefix="chatisma ", intents=intents)
 bot.remove_command("help")
-bot.conversation = ""
+bot.conversation=[{"role": "system", "content": "You are a helpful assistant."}]
 
 @bot.command(name="profile")
 async def Profile(ctx, user: Member = None):
@@ -78,7 +78,7 @@ async def Server(ctx):
 
 @bot.command(name='leave')
 async def leave(ctx):
-    bot.conversation=""
+    bot.conversation=[{"role": "system", "content": "You are a helpful assistant."}]
     await ctx.voice_client.disconnect()
     await ctx.send("👋")
 
@@ -98,7 +98,8 @@ async def leave(ctx):
 
 @bot.command(name='join')
 async def stop(ctx):
-    bot.conversation = ""
+    bot.conversation=[{"role": "system", "content": "You are a helpful assistant."}]
+
     user = ctx.message.author
     if user.voice != None:
         try:
@@ -133,26 +134,45 @@ async def cht(ctx, *args):
     text = " ".join(args)
     user = ctx.message.author
     
-    prompt = str(user) + ": " + str(text) + BOT_NAME + ": "
-    print(str(user) + ": " + str(text))
+    #### ChatGPT 3.0
+    # prompt = str(user) + ": " + str(text) + BOT_NAME + ": "
+    # print(str(user) + ": " + str(text))
     
-    bot.conversation += prompt
+    # bot.conversation += prompt
+
+    # # fetch response from open AI api
+    # response = openai.Completion.create(
+    #     engine='text-davinci-003', 
+    #     prompt=bot.conversation, 
+    #     temperature=0.7,
+    #     max_tokens=1000,
+    #     top_p=1.0,
+    #     frequency_penalty=0.0,
+    #     presence_penalty=0.0)
+    
+    # response_str = response["choices"][0]["text"].replace("\n", "")
+    # response_str = response_str.split(str(user) + ": ", 1)[0].split(BOT_NAME + ": ", 1)[0]
+
+    # bot.conversation += response_str + "\n"
+    # print(BOT_NAME + ": " + response_str)
+    ####
+    
+    #### ChatGPT 3.5
+    bot.conversation.append({"role": "user", "content": text})
 
     # fetch response from open AI api
-    response = openai.Completion.create(
-        engine='text-davinci-003', 
-        prompt=bot.conversation, 
-        temperature=0.7,
-        max_tokens=1000,
-        top_p=1.0,
-        frequency_penalty=0.0,
-        presence_penalty=0.0)
-    
-    response_str = response["choices"][0]["text"].replace("\n", "")
-    response_str = response_str.split(str(user) + ": ", 1)[0].split(BOT_NAME + ": ", 1)[0]
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages = bot.conversation,
+        temperature=2,
+        max_tokens=250,
+        top_p=0.9
+    )
 
-    bot.conversation += response_str + "\n"
-    print(BOT_NAME + ": " + response_str)
+    bot.conversation.append({"role": "assistant", "content": response['choices'][0]['message']['content']})
+    response_str="\n" + response['choices'][0]['message']['content'] + "\n"
+    print(response_str)
+    ####
     
     await ctx.send(response_str)
     
