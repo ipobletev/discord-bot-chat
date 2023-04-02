@@ -66,6 +66,14 @@ Play entered text (Automatically calls bot to voice channel if not present)
     
     chatisma tts "text"
 
+Set system prompt to ChatGPT OpenAI.
+    
+    chatisma system_prompt "You are a helpful assistant."
+
+Set system voice language for text to speech.
+    
+    chatisma voice_language "en"
+
 Send prompt to OpenAI, respond with text and voice (Automatically calls bot to voice channel if not present)
     
     chatisma cht "text"
