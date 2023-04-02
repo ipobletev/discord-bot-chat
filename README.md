@@ -27,7 +27,8 @@ The user must be in a voice channel, they can talk to the bot via text using the
         DISCORD_TOKEN="TOKEN"
 
         #Config
-        CONVERSATION_SYSTEM="You are a helpful assistant."
+        SYSTEM_PROMPT="You are a helpful assistant."
+        VOICE_LANGUAGE="en"
 
 4- Execute
 
