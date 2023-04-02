@@ -65,6 +65,10 @@ Manually call bot to voice channel
 
     chatisma join
 
+Play a yt url
+
+    chatisma play "url"
+
 Use a image processing from openia (DALL-E 2)
 
     chatisma img "prompt"
