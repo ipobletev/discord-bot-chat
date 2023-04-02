@@ -44,8 +44,8 @@ async def help(ctx):
         "chatisma voice_language \"en\"":"Set system voice language for text to speech.",
         "chatisma cht \"text\"": "Send prompt to OpenAI, respond with text and voice (Automatically calls bot to voice channel if not present)"
     }
-    for [fieldName, fieldVal] in helpData.items():
-        embed.add_field(name=fieldName, value=fieldVal, inline=False)
+    for [fieldCmd, fieldDescription] in helpData.items():
+        embed.add_field(name=fieldDescription, value=fieldCmd, inline=False)
     await ctx.send(embed=embed)
     
 @bot.command(name="profile")
