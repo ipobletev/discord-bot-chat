@@ -29,6 +29,24 @@ bot.remove_command("help")
 bot.conversation=[{"role": "system", "content": userconfig.SYSTEM_PROMPT}]
 bot.voice_language = userconfig.VOICE_LANGUAGE
 bot.SYSTEM_PROMPT = userconfig.SYSTEM_PROMPT
+
+@bot.command(name='help')
+async def help(ctx):
+    embed = Embed(title="Chatisma commands", color=0x0080ff)
+    helpData = {
+        "chatisma profile": "Query user profile information",
+        "chatisma server":"Query server profile information",
+        "chatisma leave":"Remove bot from voice channel",
+        "chatisma stop":"Stop bot's voice action",
+        "chatisma join":"Manually call bot to voice channel",
+        "chatisma tts \"text\"":"Play entered text (Automatically calls bot to voice channel if not present)",
+        "chatisma system_prompt \"You are a helpful assistant.\"":"Set system prompt to ChatGPT OpenAI.",
+        "chatisma voice_language \"en\"":"Set system voice language for text to speech.",
+        "chatisma cht \"text\"": "Send prompt to OpenAI, respond with text and voice (Automatically calls bot to voice channel if not present)"
+    }
+    for [fieldName, fieldVal] in helpData.items():
+        embed.add_field(name=fieldName, value=fieldVal, inline=False)
+    await ctx.send(embed=embed)
     
 @bot.command(name="profile")
 async def Profile(ctx, user: Member = None):
@@ -194,7 +212,7 @@ async def cht(ctx, *args):
 
         myobj = gTTS(text=response_str, lang=bot.voice_language, slow=False)
         myobj.save("tts-audio.mp3")
-
+        
         source = await nextcord.FFmpegOpusAudio.from_probe("tts-audio.mp3", method='fallback')
         vc.play(source)
     else:
