@@ -24,8 +24,12 @@ intents.message_content = True
 intents.members = True
 bot = commands.Bot(command_prefix="chatisma ", intents=intents)
 bot.remove_command("help")
-bot.conversation=[{"role": "system", "content": userconfig.DEFAULT_SYSTEM_PROMPT}]
 
+#Init var
+bot.conversation=[{"role": "system", "content": userconfig.SYSTEM_PROMPT}]
+bot.voice_language = userconfig.VOICE_LANGUAGE
+bot.SYSTEM_PROMPT = userconfig.SYSTEM_PROMPT
+    
 @bot.command(name="profile")
 async def Profile(ctx, user: Member = None):
     if user == None:
@@ -69,7 +73,7 @@ async def Server(ctx):
 
 @bot.command(name='leave')
 async def leave(ctx):
-    bot.conversation=[{"role": "system", "content": userconfig.DEFAULT_SYSTEM_PROMPT}]
+    bot.conversation=[{"role": "system", "content": userconfig.SYSTEM_PROMPT}]
     await ctx.voice_client.disconnect()
     await ctx.send("👋")
 
@@ -89,7 +93,7 @@ async def leave(ctx):
 
 @bot.command(name='join')
 async def stop(ctx):
-    bot.conversation=[{"role": "system", "content": userconfig.DEFAULT_SYSTEM_PROMPT}]
+    bot.conversation=[{"role": "system", "content": userconfig.SYSTEM_PROMPT}]
 
     user = ctx.message.author
     if user.voice != None:
@@ -100,6 +104,19 @@ async def stop(ctx):
     else:
         await ctx.send('You need to be in a vc to run this command!')
 
+@bot.command(name='voice_language')
+async def voice_language(ctx, *args):
+    text = " ".join(args)
+    bot.voice_language = text[:2]   
+    await ctx.send('The language of the voice has changed to', bot.voice_language)
+
+@bot.command(name='system_prompt')
+async def system_prompt(ctx, *args):
+    text = " ".join(args)
+    bot.SYSTEM_PROMPT = text
+    bot.conversation=[{"role": "system", "content": text}]
+    await ctx.send('The conversation has been restarted. System prompt has been changed')
+    
 @bot.command(name='tts')
 async def tts(ctx, *args):
     text = " ".join(args)
@@ -112,7 +129,7 @@ async def tts(ctx, *args):
         if vc.is_playing():
             vc.stop()
 
-        myobj = gTTS(text=text, lang="es", slow=False)
+        myobj = gTTS(text=text, lang=bot.voice_language, slow=False)
         myobj.save("tts-audio.mp3")
 
         source = await nextcord.FFmpegOpusAudio.from_probe("tts-audio.mp3", method='fallback')
@@ -175,7 +192,7 @@ async def cht(ctx, *args):
         if vc.is_playing():
             vc.stop()
 
-        myobj = gTTS(text=response_str, lang="es", slow=False)
+        myobj = gTTS(text=response_str, lang=bot.voice_language, slow=False)
         myobj.save("tts-audio.mp3")
 
         source = await nextcord.FFmpegOpusAudio.from_probe("tts-audio.mp3", method='fallback')
