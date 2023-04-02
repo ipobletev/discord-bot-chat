@@ -16,7 +16,6 @@ import openai
 
 #OpenAi
 openai.api_key = userconfig.OPENAI_APIKEY
-BOT_NAME="ChatGPT"
 
 #Discord
 intents = Intents.default()
@@ -43,7 +42,8 @@ async def help(ctx):
         "chatisma tts \"text\"":"Play entered text (Automatically calls bot to voice channel if not present)",
         "chatisma system_prompt \"You are a helpful assistant.\"":"Set system prompt to ChatGPT OpenAI.",
         "chatisma voice_language \"en\"":"Set system voice language for text to speech.",
-        "chatisma cht \"text\"": "Send prompt to OpenAI, respond with text and voice (Automatically calls bot to voice channel if not present)"
+        "chatisma cht \"prompt\"": "Send prompt to OpenAI, respond with text and voice (Automatically calls bot to voice channel if not present)",
+        "chatisma img \"prompt\"": "Use a image processing from openia (DALL-E 2)"
     }
     for [fieldCmd, fieldDescription] in helpData.items():
         embed.add_field(name=fieldDescription, value=fieldCmd, inline=False)
@@ -162,7 +162,7 @@ async def cht(ctx, *args):
     user = ctx.message.author
     
     #### ChatGPT 3.0
-    # prompt = str(user) + ": " + str(text) + BOT_NAME + ": "
+    # prompt = str(user) + ": " + str(text) + "ChatGPT" + ": "
     # print(str(user) + ": " + str(text))
     
     # bot.conversation += prompt
@@ -178,10 +178,10 @@ async def cht(ctx, *args):
     #     presence_penalty=0.0)
     
     # response_str = response["choices"][0]["text"].replace("\n", "")
-    # response_str = response_str.split(str(user) + ": ", 1)[0].split(BOT_NAME + ": ", 1)[0]
+    # response_str = response_str.split(str(user) + ": ", 1)[0].split("ChatGPT" + ": ", 1)[0]
 
     # bot.conversation += response_str + "\n"
-    # print(BOT_NAME + ": " + response_str)
+    # print("ChatGPT" + ": " + response_str)
     ####
     
     #### ChatGPT 3.5
@@ -219,6 +219,19 @@ async def cht(ctx, *args):
     else:
         await ctx.send('You need to be in a vc to run this command!')
 
+@bot.command(name='img')
+async def img(ctx, *args):
+    n=1
+    prompt = " ".join(args)
+    response = openai.Image.create(
+        prompt=prompt,
+        n=n,
+        size="1024x1024"
+        )
+    for i in range(n):
+        image_url = response['data'][i]['url']
+        print(image_url)
+        await ctx.send(image_url)
 
 @bot.event
 async def on_ready():

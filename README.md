@@ -1,8 +1,10 @@
 # Discord bot chatGPT
 
-Discord bot implementation that uses the ChatGPT API (default model: gpt-3.5-turbo).
+Discord bot implementation that uses the openIA chatgpt (default model: gpt-3.5-turbo) and Image generation dall-e 2.
 
-The user must be in a voice channel, they can talk to the bot via text using the **charisma chat "message"** command in the same voice text channel. The bot will join that channel and respond with voice and text.
+Chatgpt: The user must be in a voice channel, they can talk to the bot via text using the **charisma chat "prompt"** command in the same voice text channel. The bot will join that channel and respond with voice and text.
+
+Dall-E 2: via text using the **charisma img "prompt"** command it respond in the same channel with the image
 
 
 ## Installation:
@@ -63,6 +65,10 @@ Manually call bot to voice channel
 
     chatisma join
 
+Use a image processing from openia (DALL-E 2)
+
+    chatisma img "prompt"
+
 Play entered text (Automatically calls bot to voice channel if not present)
     
     chatisma tts "text"
@@ -77,4 +83,4 @@ Set system voice language for text to speech.
 
 Send prompt to OpenAI, respond with text and voice (Automatically calls bot to voice channel if not present)
     
-    chatisma cht "text"
+    chatisma cht "prompt"
