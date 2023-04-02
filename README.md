@@ -1,6 +1,8 @@
 # Discord bot chatGPT
 
-This is a Discord bot implementation that uses the ChatGPT API to communicate via text and respond in voice and text.
+Discord bot implementation that uses the ChatGPT API (default model: gpt-3.5-turbo).
+
+The user must be in a voice channel, they can talk to the bot via text using the **charisma chat "message"** command in the same voice text channel. The bot will join that channel and respond with voice and text.
 
 
 ## Installation:
@@ -18,11 +20,14 @@ This is a Discord bot implementation that uses the ChatGPT API to communicate vi
 
 3. Configuration of credentials and others
 
-    Create a ".env" file in the main project directory. Set the Discord and ChatGPT API credentials.
+    Create a ".env" file in the main project directory. Set the Discord and ChatGPT API credentials. Example: see .env.example file.
 
         # Creds
         OPENAI_APIKEY="APIKEY"
         DISCORD_TOKEN="TOKEN"
+
+        #Config
+        CONVERSATION_SYSTEM="You are a helpful assistant."
 
 4- Execute
 

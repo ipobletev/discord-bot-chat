@@ -47,15 +47,6 @@ async def Profile(ctx, user: Member = None):
     embed.set_thumbnail(user.display_avatar)
     await ctx.send(embed=embed)
 
-    # for server
-    # descriptionIn embeds.0.thumbnail.url: Scheme "none" is not supported. Scheme must be one of ('http', 'https').
-    # member count
-    # online count
-    # icon
-    # owner name
-    # created at
-
-
 @bot.command(name="server", pass_context=True)
 async def Server(ctx):
     guild = ctx.message.author.guild
