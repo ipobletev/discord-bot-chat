@@ -34,6 +34,7 @@ bot.SYSTEM_PROMPT = userconfig.SYSTEM_PROMPT
 async def help(ctx):
     embed = Embed(title="Chatisma commands", color=0x0080ff)
     helpData = {
+        "chatisma help": "Show help commands",
         "chatisma profile": "Query user profile information",
         "chatisma server":"Query server profile information",
         "chatisma leave":"Remove bot from voice channel",

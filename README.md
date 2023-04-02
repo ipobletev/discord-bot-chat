@@ -38,9 +38,9 @@ Init discord bot.
 ## Bot Commands
 
 ---
-Main Command - Prefix
-
-    chatisma <command> <valor>
+Show help commands
+    
+    chatisma help
 
 Query user profile information
     
