@@ -13,6 +13,7 @@ import nextcord
 from gtts import gTTS
 import pyttsx3
 import openai
+import yt_dlp as youtube_dl
 
 #OpenAi
 openai.api_key = userconfig.OPENAI_APIKEY
@@ -28,6 +29,11 @@ bot.remove_command("help")
 bot.conversation=[{"role": "system", "content": userconfig.SYSTEM_PROMPT}]
 bot.voice_language = userconfig.VOICE_LANGUAGE
 bot.SYSTEM_PROMPT = userconfig.SYSTEM_PROMPT
+
+# Youtube
+yt_dl_opts = {'format': 'bestaudio/best'}
+ytdl = youtube_dl.YoutubeDL(yt_dl_opts)
+ffmpeg_options = {'options': "-vn"}
 
 @bot.command(name='help')
 async def help(ctx):
@@ -233,6 +239,27 @@ async def img(ctx, *args):
         print(image_url)
         await ctx.send(image_url)
 
+@bot.command(name='play')
+async def play(ctx, url: str):
+    user = ctx.message.author
+    if user.voice != None:
+        try:
+            vc = await user.voice.channel.connect()
+        except:
+            vc = ctx.voice_client
+        if vc.is_playing():
+            vc.stop()
+        try:
+            loop = asyncio.get_event_loop()
+            data = await loop.run_in_executor(None, lambda: ytdl.extract_info(url, download=False))
+            song = data['url']
+            player = nextcord.FFmpegPCMAudio(song, **ffmpeg_options)
+            vc.play(player)
+            print(url)
+        except Exception as err:
+            print(err)
+
+        
 @bot.event
 async def on_ready():
     print(f"Loggined in as: {bot.user.name}")
