@@ -4,12 +4,15 @@ node_modules
 config.json
 tts-audio.mp3
 
-#windows audio
-ffmpeg.exe
-ffplay.exe
-ffprobe.exe
+#audio
+ffmpeg*
+ffplay*
+ffprobe*
 
 #Python
 myvenv
 test*
 __pycache__
+
+#others temps
+*.mp3

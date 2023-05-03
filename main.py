@@ -1,3 +1,4 @@
+import tempfile
 import userconfig
 from distutils.log import debug
 from nextcord.ext import commands
@@ -14,9 +15,28 @@ from gtts import gTTS
 import pyttsx3
 import openai
 import yt_dlp as youtube_dl
+from elevenlabs import generate, stream, set_api_key, voices
+import ipywidgets as widgets
 
 #OpenAi
 openai.api_key = userconfig.OPENAI_APIKEY
+
+#Eleven
+set_api_key(userconfig.ELEVEN_APY_KEY)
+
+voice_list = voices()
+
+voice_labels = [voice.name for voice in voice_list]
+index_voice = voice_labels.index(userconfig.ELEVEN_VOICE_NAME)
+
+voice_id_dropdown = widgets.Dropdown(
+    options=voice_labels,
+    value=voice_labels[index_voice],
+)
+
+# Encuentra el índice de la opción seleccionada
+selected_voice_index = voice_labels.index(voice_id_dropdown.value)
+selected_voice_id    = voice_list[selected_voice_index].voice_id
 
 #Discord
 intents = Intents.default()
@@ -122,6 +142,7 @@ async def stop(ctx):
     bot.conversation=[{"role": "system", "content": userconfig.SYSTEM_PROMPT}]
 
     user = ctx.message.author
+    await user.voice.channel.connect()
     if user.voice != None:
         try:
             await user.voice.channel.connect()
@@ -154,6 +175,8 @@ async def tts(ctx, *args):
             vc = ctx.voice_client
         if vc.is_playing():
             vc.stop()
+    
+
 
         myobj = gTTS(text=text, lang=bot.voice_language, slow=False)
         myobj.save("tts-audio.mp3")
@@ -218,11 +241,47 @@ async def cht(ctx, *args):
         if vc.is_playing():
             vc.stop()
 
-        myobj = gTTS(text=response_str, lang=bot.voice_language, slow=False)
-        myobj.save("tts-audio.mp3")
+        # audiofilename = "audio.mp3"
+        # audio_stream = generate(
+        #     text=response_str,
+        #     voice=userconfig.ELEVEN_VOICE_NAME,
+        #     model='eleven_multilingual_v1',
+        #     stream=True
+        # )
+
+        CHUNK_SIZE = 1024
+        url = "https://api.elevenlabs.io/v1/text-to-speech/" + selected_voice_id
+
+        headers = {
+            "Accept": "audio/mpeg",
+            "Content-Type": "application/json",
+            "xi-api-key": userconfig.ELEVEN_APY_KEY
+        }
+
+        data = {
+            "text": response_str,
+            "model_id" : "eleven_multilingual_v1",
+            "voice_settings": {
+                "stability": 0.3,
+                "similarity_boost": 0.7
+            }
+        }
+
+        response = requests.post(url, json=data, headers=headers)
         
-        source = await nextcord.FFmpegOpusAudio.from_probe("tts-audio.mp3", method='fallback')
+        # Save audio data to a temporary file
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as f:
+            for chunk in response.iter_content(chunk_size=CHUNK_SIZE):
+                if chunk:
+                    f.write(chunk)
+            f.flush()
+            temp_filename = f.name
+        
+        # with open("audio.mp3", 'wb') as out:
+        #     out.write(audio_stream)
+        source = await nextcord.FFmpegOpusAudio.from_probe(temp_filename, method='fallback')
         vc.play(source)
+        
     else:
         await ctx.send('You need to be in a vc to run this command!')
 
