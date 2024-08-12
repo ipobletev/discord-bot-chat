@@ -1,14 +1,22 @@
+import io
+import json
 import os
 import discord
 from discord.ext import commands
 from config import DISCORD_TOKEN
 from modules.llm.llm import LLMService
 from wsagent.ai_helper.schemas.ai_helper_response import AIHelperResponse
+from nextcord import File, ButtonStyle, Embed, Color, SelectOption, Intents, Interaction, SlashOption, Member
+from nextcord.ui import Button, View, Select
+import nextcord
+from gtts import gTTS
 
 intents = discord.Intents.default()
 intents.message_content = True
+intents.members = True
+# helpGuide = json.load(open("help.json"))
 
-bot = commands.Bot(command_prefix="/", intents=intents)
+bot = commands.Bot(command_prefix="Hema ", intents=intents)
 
 @bot.event
 async def on_ready():
@@ -18,6 +26,115 @@ async def on_ready():
 async def on_message(message):
     print(f'Message from {message.author}: {message.content}')
     await bot.process_commands(message)
+
+@bot.command(name="profile")
+async def Profile(ctx, user: Member = None):
+    if user == None:
+        user = ctx.message.author
+    inline = True
+    embed = Embed(title=user.name+"#"+user.discriminator, color=0x0080ff)
+    userData = {
+        "Mention": user.mention,
+        "Nick": user.nick,
+        "Created at": user.created_at.strftime("%b %d, %Y, %T"),
+        "Joined at": user.joined_at.strftime("%b %d, %Y, %T"),
+        "Server": user.guild,
+        "Top role": user.top_role
+    }
+    for [fieldName, fieldVal] in userData.items():
+        embed.add_field(name=fieldName+":", value=fieldVal, inline=inline)
+    embed.set_footer(text=f"id: {user.id}")
+
+    embed.set_thumbnail(user.display_avatar)
+    await ctx.send(embed=embed)
+
+@bot.command(name="server", pass_context=True)
+async def Server(ctx):
+    guild = ctx.message.author.guild
+    inline = True
+    embed = Embed(title=guild.name, color=0x0080ff)
+    userData = {
+        "Owner": guild.owner.mention,
+        "Channels": len(guild.channels),
+        "Members": guild.member_count,
+        "Created at": guild.created_at.strftime("%b %d, %Y, %T"),
+        "Description": guild.description,
+        # "Active" : guild.presence_count,
+    }
+    for [fieldName, fieldVal] in userData.items():
+        embed.add_field(name=fieldName+":", value=fieldVal, inline=inline)
+    embed.set_footer(text=f"id: {guild.id}")
+
+    embed.set_thumbnail(guild.icon)
+    await ctx.send(embed=embed)
+
+# @bot.command(name="help")
+# async def Help(ctx):
+#     currentPage = 0
+
+#     def createHelpEmbed(pageNum=0, inline=False):
+#         pageNum = (pageNum) % len(list(helpGuide))
+#         pageTitle = list(helpGuide)[pageNum]
+#         embed = Embed(color=0x0080ff, title=pageTitle)
+#         for key, val in helpGuide[pageTitle].items():
+#             embed.add_field(name=bot.command_prefix+key, value=val, inline=inline)
+#             embed.set_footer(text=f"Page {pageNum+1} of {len(list(helpGuide))}")
+#         return embed
+
+#     # functionality for buttons
+
+#     async def next_callback(interaction):
+#         nonlocal currentPage, sent_msg
+#         currentPage += 1
+#         await sent_msg.edit(embed=createHelpEmbed(pageNum=currentPage), view=myview)
+
+#     async def previous_callback(interaction):
+#         nonlocal currentPage, sent_msg
+#         currentPage -= 1
+#         await sent_msg.edit(embed=createHelpEmbed(pageNum=currentPage), view=myview)
+
+#     # add buttons to embed
+
+#     previousButton = Button(label="<", style=ButtonStyle.blurple)
+#     nextButton = Button(label=">", style=ButtonStyle.blurple)
+#     previousButton.callback = previous_callback
+#     nextButton.callback = next_callback
+
+#     myview = View(timeout=180)
+#     myview.add_item(previousButton)
+#     myview.add_item(nextButton)
+
+#     sent_msg = await ctx.send(embed=createHelpEmbed(currentPage), view=myview)
+
+@bot.command(name='join')
+async def stop(ctx):
+    user = ctx.message.author
+    if user.voice != None:
+        try:
+            await user.voice.channel.connect()
+        except:
+            await ctx.send("I'm already in the vc!")
+    else:
+        await ctx.send('You need to be in a vc to run this command!')
+            
+@bot.command(name='write')
+async def write(ctx, *, user_text: str):
+    
+    print(f'User: {user_text}')
+    
+    llm_service = LLMService()
+    
+    text_chunk=""
+    responses = llm_service.llm_request(user_text)
+    async for response in responses:
+        if not isinstance(response, AIHelperResponse):
+            text_chunk += response
+            if text_chunk.endswith("."):
+                await ctx.send(text_chunk)
+                text_chunk = ""
+            print(response, flush=True, end="")
+        else:
+            all_text = response.result[0]
 
 @bot.command(name='speak')
 async def speak(ctx, *, user_text: str):
@@ -36,8 +153,53 @@ async def speak(ctx, *, user_text: str):
                 text_chunk = ""
             print(response, flush=True, end="")
         else:
-            all_messages = response.result[0]
+            all_text = response.result[0]
 
+@bot.command(name='tts')
+async def ws_tts(ctx, *args):
+    
+    async def generate_bot_audio(file_name):
+        if user.voice != None:
+            try:
+                vc = await user.voice.channel.connect()
+            except:
+                vc = ctx.voice_client
+            
+            if not vc.is_playing():
+                source = nextcord.FFmpegPCMAudio(file_name)
+                vc.play(source)
+                            
+            # if os.path.exists(file_name):
+            #     os.remove(file_name)
+            # else:
+            #     print(f"The file {file_name} does not exist")
+        else:
+            print('You need to be in a vc to run this command!')
+            return await ctx.send('You need to be in a vc to run this command!')
+        
+    try: 
+        text = " ".join(args)
+        user = ctx.message.author
+
+        print(f'User: {text}')
+        
+        llm_service = LLMService()
+        
+        text_chunk=""
+        responses = await llm_service.llm_request(text)
+        async for response in responses:
+            if not isinstance(response, AIHelperResponse):
+                text_chunk += response
+                if text_chunk.endswith("."):
+                    file_name = await llm_service.text_to_speech(text_chunk)
+                    await generate_bot_audio(file_name)
+                    text_chunk = ""
+                # print(response, flush=True, end="")
+            else:
+                all_text = response.result[0]
+    except Exception as e:
+        print(e)
+        
 # @bot.command(name='help')
 # async def help(ctx):
 #     embed = discord.Embed(title="Chatisma commands", color=0x0080ff)
