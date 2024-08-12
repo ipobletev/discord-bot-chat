@@ -13,6 +13,7 @@ ffprobe*
 myvenv
 test*
 __pycache__
+.venv
 
 #others temps
 *.mp3
