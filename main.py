@@ -8,7 +8,7 @@ from wsagent.ai_helper.schemas.ai_helper_response import AIHelperResponse
 intents = discord.Intents.default()
 intents.message_content = True
 
-bot = commands.Bot(command_prefix="/Hema", intents=intents)
+bot = commands.Bot(command_prefix="/", intents=intents)
 
 @bot.event
 async def on_ready():
@@ -26,14 +26,17 @@ async def speak(ctx, *, user_text: str):
     
     llm_service = LLMService()
     
+    text_chunk=""
     responses = llm_service.llm_request(user_text)
     async for response in responses:
         if not isinstance(response, AIHelperResponse):
+            text_chunk += response
+            if text_chunk.endswith("."):
+                await ctx.send(text_chunk)
+                text_chunk = ""
             print(response, flush=True, end="")
         else:
             all_messages = response.result[0]
-    
-    await ctx.send(all_messages)
 
 # @bot.command(name='help')
 # async def help(ctx):
