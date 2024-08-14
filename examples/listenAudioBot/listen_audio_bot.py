@@ -9,13 +9,11 @@ discord.opus._load_default()
 
 DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
 
-bot = commands.Bot(command_prefix=commands.when_mentioned, intents=discord.Intents.all())
-
 class Testing(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command()
+    @bot.command()
     async def test(self, ctx):
         def callback(user, data: voice_recv.VoiceData):
             print(f"Got packet from {user}")
@@ -30,11 +28,11 @@ class Testing(commands.Cog):
         vc = await ctx.author.voice.channel.connect(cls=voice_recv.VoiceRecvClient)
         vc.listen(voice_recv.BasicSink(callback))
 
-    @commands.command()
+    @bot.command()
     async def stop(self, ctx):
         await ctx.voice_client.disconnect()
 
-    @commands.command()
+    @bot.command()
     async def die(self, ctx):
         ctx.voice_client.stop()
         await ctx.bot.close()

@@ -18,15 +18,45 @@ class LLMService:
         # # Initialize the ffplay process once
         # ffplay_cmd = ['ffplay', '-autoexit', '-nodisp', '-']
         # self.ffplay_proc = subprocess.Popen(ffplay_cmd, stdin=subprocess.PIPE)
+    
+    async def discord_history_to_llm_history(self, ctx):
+        # get chat history
+        discord_history = []
+        async for message in ctx.history(limit=50):
+            discord_history.append({"author": message.author.name, "content": message.content})
         
-    async def llm_request(self, prompt):
+        # discord_history revert position
+        discord_history.reverse()
+        
+        history_message = []
+        previous_author = None
+        for history in discord_history:
+            if history["author"] == "Hema":
+                if previous_author == "Hema":
+                    history_message[-1]["content"] += " " + history["content"]
+                else:
+                    history_message.append({"role": "assistant", "content": history["content"]})
+            else:
+                history_message.append({"role": "user", "content": f'{history["author"]}: {history["content"]}'})
+            previous_author = history["author"]
+        
+        return history_message
+            
+    async def llm_request(self, ctx):
+        
+        SYSTEM_PROMPT = "You are Hema a helpful assistant, smiling and an charismatic woman. You Hema must end you conversation always with '.'"
+        
+        history_message = await self.discord_history_to_llm_history(ctx)
         
         messages = [
-            {"role": "system", "content": "You are Hema a helpful assistant. You Hema must end you conversation always with '.'"},
-            {"role": "user", "content": prompt},
+            {"role": "system", "content": f"{SYSTEM_PROMPT}"},
         ]
+        if history_message: messages.extend(history_message)
+
+        # user_message = messages[-1]["content"]
+        # messages.append({"role": "user", "content": user_message})
         
-        return self.ai_helper.execute(
+        responses = self.ai_helper.execute(
             action=AIHelper.Action.CHAT,
             action_params={
                 "model": AIHelper.OpenAI.Chat.Models.GPT_4_O,
@@ -34,6 +64,8 @@ class LLMService:
                 "stream": True,
             }
         )
+        async for response in responses:
+            yield response
     
     async def text_to_speech(self, text):
         
