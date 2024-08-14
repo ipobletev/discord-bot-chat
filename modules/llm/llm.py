@@ -1,3 +1,4 @@
+import os
 import uuid
 from wsagent import AIHelper, AIHelperInterface
 from wsagent.ai_services.ai_services_enum import AIServices
@@ -47,7 +48,8 @@ class LLMService:
             if isinstance(audio_chunk, AIHelperResponse):
                 # Save the final audio content to a file
                 str_uuid = str(uuid.uuid4())
-                file_name = f"temp_{str_uuid}.mp3"
+                os.makedirs("temp", exist_ok=True)
+                file_name = f"temp/temp_{str_uuid}.mp3"
                 with open(file_name, "wb") as audio_file:
                     audio_file.write(audio_chunk.result)
 
