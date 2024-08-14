@@ -3,7 +3,7 @@ import uuid
 from wsagent import AIHelper, AIHelperInterface
 from wsagent.ai_services.ai_services_enum import AIServices
 from wsagent.ai_helper.schemas.ai_helper_response import AIHelperResponse
-from config import OPENAI_API_KEY
+from config import OPENAI_API_KEY, ELEVENLABS_API_KEY
 import subprocess
 
 class LLMService:
@@ -12,6 +12,7 @@ class LLMService:
         self.ai_helper = AIHelperInterface(
             ai_service_params={
                 "openai_api_key": OPENAI_API_KEY,
+                "elevenlabs_api_key": ELEVENLABS_API_KEY,
             }
         )
         # # Initialize the ffplay process once
@@ -35,12 +36,13 @@ class LLMService:
         )
     
     async def text_to_speech(self, text):
+        
         file_name=""
         responses = self.ai_helper.execute(
             action=AIHelper.Action.AUDIO_TEXT_TO_SPEECH,
             action_params={
-                "model": AIHelper.OpenAI.Audio.Models.TTS_1_HD,
-                "voice": AIServices.OpenAI.Feature.Audio.Voices.NOVA,
+                "model": AIHelper.ElevenLabs.Audio.Models.MULTILOINGUAL_V2,
+                "voice": "cgSgspJ2msm6clMCkdW9",
                 "text": text
             }
         )

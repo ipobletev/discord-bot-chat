@@ -12,6 +12,8 @@ ffprobe*
 #Python
 myvenv
 test*
+temp
+temp_*
 __pycache__
 .venv
 
