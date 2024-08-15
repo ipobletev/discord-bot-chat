@@ -1,11 +1,10 @@
 from nextcord import Embed, Member
 from discord.ext import commands
-from bot_initialization import bot
 
-class CogHookCommandsDefaults(commands.Cog):
+class CogHookCommandsInformation(commands.Cog):
         
-    @bot.command(name="profile")
-    async def profile(ctx, user: Member = None):
+    @commands.command(name="profile")
+    async def profile(self, ctx, user: Member = None):
         if user == None:
             user = ctx.message.author
         inline = True
@@ -25,8 +24,8 @@ class CogHookCommandsDefaults(commands.Cog):
         embed.set_thumbnail(user.display_avatar)
         await ctx.send(embed=embed)
 
-    @bot.command(name="server", pass_context=True)
-    async def server(ctx):
+    @commands.command(name="server")
+    async def server(self, ctx):
         guild = ctx.message.author.guild
         inline = True
         embed = Embed(title=guild.name, color=0x0080ff)

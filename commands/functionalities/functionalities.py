@@ -1,25 +1,15 @@
 import discord
-from nextcord import Embed, Member
 from discord.ext import commands
 from modules.llm.llm import LLMService
 from wsagent.ai_helper.schemas.ai_helper_response import AIHelperResponse
-from bot_initialization import bot, audio_player
 
 class CogHookCommandsFunctionalities(commands.Cog):
+    def __init__(self, bot, audio_player):
+        self.bot = bot
+        self.audio_player = audio_player
         
-    @bot.command(name='join')
-    async def join(ctx):
-        user = ctx.message.author
-        if user.voice is not None:
-            try:
-                await user.voice.channel.connect()
-            except:
-                await ctx.send("I'm already in the vc!")
-        else:
-            await ctx.send('You need to be in a vc to run this command!')
-
-    @bot.command(name='llm')
-    async def llm(ctx, *, user_text: str):
+    @commands.command(name='llm')
+    async def llm(self, ctx, *, user_text: str):
         
         print(f'User: {user_text}')
         llm_service = LLMService()
@@ -37,10 +27,10 @@ class CogHookCommandsFunctionalities(commands.Cog):
             else:
                 all_text = response.result[0]
 
-    @bot.command(name='tts')
-    async def tts(ctx, *, text: str):
+    @commands.command(name='tts')
+    async def tts(self, ctx, *, text: str):
         try:
-            if not discord.utils.get(bot.voice_clients, guild=ctx.guild):
+            if not discord.utils.get(self.bot.voice_clients, guild=ctx.guild):
                 await ctx.author.voice.channel.connect()
             
             user = ctx.message.author
@@ -49,15 +39,15 @@ class CogHookCommandsFunctionalities(commands.Cog):
             # Convert text to speech
             llm_service = LLMService()
             file_name = await llm_service.text_to_speech(text)
-            await audio_player.play_audio(file_name, user)
+            await self.audio_player.play_audio(file_name, user)
         except Exception as e:
             print(e)
 
-    @bot.command(name='speak')
-    async def speak(ctx, *args):
+    @commands.command(name='speak')
+    async def speak(self, ctx, *args):
         try: 
             
-            if not discord.utils.get(bot.voice_clients, guild=ctx.guild):
+            if not discord.utils.get(self.bot.voice_clients, guild=ctx.guild):
                 await ctx.author.voice.channel.connect()
             
             text = " ".join(args)
@@ -74,7 +64,7 @@ class CogHookCommandsFunctionalities(commands.Cog):
                     if text_chunk.endswith("."):
                         print(f'Converting text to speech: {text_chunk}')
                         file_name = await llm_service.text_to_speech(text_chunk)
-                        await audio_player.play_audio(file_name, user)
+                        await self.audio_player.play_audio(file_name, user)
                         text_chunk = ""
                 else:
                     all_text = response.result[0]
