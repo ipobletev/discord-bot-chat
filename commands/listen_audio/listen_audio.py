@@ -17,5 +17,8 @@ class CogHookCommandsListenAudio(commands.Cog):
             # print('#' * int(power * (79/128)))
             ## instead of 79 you can use shutil.get_terminal_size().columns-1
 
-        vc = await ctx.author.voice.channel.connect(cls=voice_recv.VoiceRecvClient)
+        if ctx.voice_client is None:
+            vc = await ctx.author.voice.channel.connect(cls=voice_recv.VoiceRecvClient)
+        else:
+            vc = ctx.voice_client
         vc.listen(voice_recv.BasicSink(callback))

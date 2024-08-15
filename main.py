@@ -5,7 +5,6 @@ from commands.listen_audio.listen_audio import CogHookCommandsListenAudio
 from bot_initialization import bot, audio_player
 from config import DISCORD_TOKEN
 import discord
-from discord.ext import commands
 
 intents = discord.Intents.default()
 intents.message_content = True

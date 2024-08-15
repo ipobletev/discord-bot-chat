@@ -1,4 +1,4 @@
-from discord.ext import commands
+from discord.ext import commands, voice_recv
 
 class CogHookCommandsDefaults(commands.Cog):
     def __init__(self, bot):
@@ -9,7 +9,7 @@ class CogHookCommandsDefaults(commands.Cog):
         user = ctx.message.author
         if user.voice is not None:
             try:
-                await user.voice.channel.connect()
+                await ctx.author.voice.channel.connect(cls=voice_recv.VoiceRecvClient)
             except:
                 await ctx.send("I'm already in the vc!")
         else:

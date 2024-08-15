@@ -1,5 +1,5 @@
 import discord
-from discord.ext import commands
+from discord.ext import commands, voice_recv
 from modules.llm.llm import LLMService
 from wsagent.ai_helper.schemas.ai_helper_response import AIHelperResponse
 
@@ -31,7 +31,7 @@ class CogHookCommandsFunctionalities(commands.Cog):
     async def tts(self, ctx, *, text: str):
         try:
             if not discord.utils.get(self.bot.voice_clients, guild=ctx.guild):
-                await ctx.author.voice.channel.connect()
+                await ctx.author.voice.channel.connect(cls=voice_recv.VoiceRecvClient)
             
             user = ctx.message.author
             print(f'User: {text}')
@@ -48,7 +48,7 @@ class CogHookCommandsFunctionalities(commands.Cog):
         try: 
             
             if not discord.utils.get(self.bot.voice_clients, guild=ctx.guild):
-                await ctx.author.voice.channel.connect()
+                await ctx.author.voice.channel.connect(cls=voice_recv.VoiceRecvClient)
             
             text = " ".join(args)
             user = ctx.message.author
