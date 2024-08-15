@@ -6,12 +6,10 @@ import subprocess
 import discord
 import shlex
 
-audio_queue = asyncio.Queue()
-
-FRAME_SIZE = 3840  # Define un tamaño de frame constante
-
 class FFmpegPCMAudio(discord.AudioSource):
-    def __init__(self, source, *, executable='ffmpeg', pipe=False, stderr=None, before_options=None, options=None):
+    
+    def __init__(self, source, *, executable='ffmpeg', pipe=False, stderr=None, before_options=None, options=None, frame_size=3840):
+        self.frame_size = frame_size
         stdin = None if not pipe else source
         args = [executable]
         if isinstance(before_options, str):
@@ -33,8 +31,8 @@ class FFmpegPCMAudio(discord.AudioSource):
         except subprocess.SubprocessError as exc:
             raise discord.ClientException('Popen failed: {0.__class__.__name__}: {0}'.format(exc)) from exc
     def read(self):
-        ret = self._stdout.read(FRAME_SIZE)
-        if len(ret) != FRAME_SIZE:
+        ret = self._stdout.read(self.frame_size)
+        if len(ret) != self.frame_size:
             return b''
         return ret
     def cleanup(self):
@@ -52,23 +50,24 @@ class BotAudioPlayer:
     def __init__(self, bot):
         self.bot = bot
         self.bot.loop.create_task(self.thread_bot_audio_player())
+        self.audio_queue = asyncio.Queue()
         
     async def play_audio(self, file_name, user):
-        await audio_queue.put(file_name)
-        audio_queue.user = user
+        await self.audio_queue.put(file_name)
+        self.audio_queue.user = user
 
     async def stop_audio(self):
-        while not audio_queue.empty():
-            audio_queue.get_nowait()
-        audio_queue.user = None
+        while not self.audio_queue.empty():
+            self.audio_queue.get_nowait()
+        self.audio_queue.user = None
        
     async def thread_bot_audio_player(self):
         while True:
-            file_name = await audio_queue.get()
+            file_name = await self.audio_queue.get()
             if file_name is None:
                 break
             
-            user = audio_queue.user
+            user = self.audio_queue.user
             channel = user.voice.channel
             vc = discord.utils.get(self.bot.voice_clients, guild=user.guild)
             
@@ -89,4 +88,4 @@ class BotAudioPlayer:
             # os.remove(file_name)
             
             mp3_fp.close()
-            audio_queue.task_done()
+            self.audio_queue.task_done()
