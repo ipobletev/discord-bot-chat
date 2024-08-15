@@ -46,11 +46,12 @@ class FFmpegPCMAudio(discord.AudioSource):
         self._process = None
             
 class BotAudioPlayer:
-            
     def __init__(self, bot):
         self.bot = bot
-        self.bot.loop.create_task(self.thread_bot_audio_player())
         self.audio_queue = asyncio.Queue()
+
+    async def setup(self):
+        self.bot.loop.create_task(self.thread_bot_audio_player())
         
     async def play_audio(self, file_name, user):
         await self.audio_queue.put(file_name)

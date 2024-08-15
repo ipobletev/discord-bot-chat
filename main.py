@@ -1,6 +1,7 @@
 from commands.defaults.defaults import CogHookCommandsDefaults
-from bot_initialization import bot
+from bot_initialization import bot, audio_player
 from commands.functionalities.functionalities import CogHookCommandsFunctionalities
+# from commands.listen_audio.listen_audio import CogHookCommandsListenAudio
 from config import DISCORD_TOKEN
 
 @bot.event
@@ -13,9 +14,11 @@ async def on_message(message):
     await bot.process_commands(message)
 
 async def setup_hook():
-    # Default Commands
-    await bot.add_cog(CogHookCommandsDefaults(bot))
-    await bot.add_cog(CogHookCommandsFunctionalities(bot))
+    await audio_player.setup()
+    bot.add_cog(CogHookCommandsDefaults(bot))
+    bot.add_cog(CogHookCommandsFunctionalities(bot))
+    # bot.add_cog(CogHookCommandsListenAudio(bot))
 
 bot.setup_hook = setup_hook
+
 bot.run(DISCORD_TOKEN)
